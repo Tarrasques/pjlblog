@@ -1,5 +1,6 @@
 package com.pengjl.controller;
-import com.pengjl.service.ArticleService;
+
+import com.pengjl.service.CategoryService;
 import com.pengjl.utils.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,16 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/article")
-public class ArticleController {
+@RequestMapping("/category")
+public class CategoryController {
 
     @Autowired
-    private ArticleService articleService;
+    private CategoryService categoryService;
 
-
-
-    @GetMapping("/hotArticleList")
-    public ResponseResult getHotArticleList() {
-        return articleService.getHotArticleList();
+    @GetMapping("/getCategoryList")
+    public ResponseResult getCategoryList(){
+        return categoryService.getCategoryList();
     }
 }
