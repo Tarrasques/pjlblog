@@ -13,5 +13,7 @@ import com.pengjl.utils.ResponseResult;
 public interface ArticleService extends IService<Article> {
 
     ResponseResult getHotArticleList();
+
+    ResponseResult getArticleList();
 }
 
