@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.pengjl.entity.Category;
 import com.pengjl.mapper.ArticleMapper;
 import com.pengjl.entity.Article;
 import com.pengjl.service.ArticleService;
@@ -12,6 +13,7 @@ import com.pengjl.utils.BeanCopyUtils;
 import com.pengjl.utils.MyRequestUtil;
 import com.pengjl.utils.ResponseResult;
 import com.pengjl.utils.SystemConstants;
+import com.pengjl.vo.ArticleDetailsVo;
 import com.pengjl.vo.ArticleListVo;
 import com.pengjl.vo.HotArticleVo;
 import com.pengjl.vo.PageVo;
@@ -63,6 +65,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 .collect(Collectors.toList());
         List<ArticleListVo> articleListVos = BeanCopyUtils.copyBeanList(articleList, ArticleListVo.class);
         return ResponseResult.okResult(new PageVo(articleListVos,page.getTotal()));
+    }
+
+    @Override
+    public ResponseResult getArticleDetails(Long id) {
+        Article article = getById(id);
+        ArticleDetailsVo articleDetailsVo = BeanCopyUtils.copyBean(article, ArticleDetailsVo.class);
+        Category category = categoryService.getById(articleDetailsVo.getCategoryId());
+        if (category != null) {
+            articleDetailsVo.setCategoryName(category.getName());
+        }
+        return ResponseResult.okResult(articleDetailsVo);
     }
 }
 
