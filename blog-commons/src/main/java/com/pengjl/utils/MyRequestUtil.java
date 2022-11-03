@@ -1,6 +1,7 @@
 package com.pengjl.utils;
 
 import com.alibaba.excel.util.StringUtils;
+import com.pengjl.exception.SystemException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +39,18 @@ public class MyRequestUtil {
         }
     }
     public String getValue(String key) {
-        return request.getParameter(key);
+           return request.getParameter(key);
+    }
+
+
+    public String getValue(String key,String defaultValue) {
+        if (StringUtils.isBlank(defaultValue)) {
+            throw new SystemException(AppHttpCodeEnum.PARAMETER_BLANK);
+        }
+        String parameter = request.getParameter(key);
+        if (StringUtils.isBlank(parameter)) {
+            return defaultValue;
+        }
+        return parameter;
     }
 }

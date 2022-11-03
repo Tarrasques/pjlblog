@@ -9,10 +9,7 @@ import com.pengjl.mapper.ArticleMapper;
 import com.pengjl.entity.Article;
 import com.pengjl.service.ArticleService;
 import com.pengjl.service.CategoryService;
-import com.pengjl.utils.BeanCopyUtils;
-import com.pengjl.utils.MyRequestUtil;
-import com.pengjl.utils.ResponseResult;
-import com.pengjl.utils.SystemConstants;
+import com.pengjl.utils.*;
 import com.pengjl.vo.ArticleDetailsVo;
 import com.pengjl.vo.ArticleListVo;
 import com.pengjl.vo.HotArticleVo;
@@ -53,7 +50,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         wrapper.orderByDesc(Article::getIsTop);
         wrapper.orderByDesc(Article::getUpdateTime);
         //查询参数有可能拓展 todo 目前只有categoryId
-        wrapper.eq(StringUtils.isNotBlank(MyRequestUtil.getRequest().getValue("categoryId")),
+        wrapper.eq(CheckUtil.isNumeric(MyRequestUtil.getRequest().getValue("categoryId")),
                     Article::getCategoryId,MyRequestUtil.getRequest().getValue("categoryId"));
         //分页
         Page<Article> page = new Page<>(MyRequestUtil.getRequest().getPageNum(), MyRequestUtil.getRequest().getPageSize());

@@ -14,5 +14,9 @@ public class SystemConstants
      * 通用正常状态
      */
     public static final String STATUS_NORMAL = "0";
-    
+
+    /**
+     *前台登录信息redis缓存前缀
+     */
+    public static final String FRONT_LOGIN_REDIS_PREFIX = "bloglogin:";
 }
