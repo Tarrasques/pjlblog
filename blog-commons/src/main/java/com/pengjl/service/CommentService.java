@@ -14,5 +14,7 @@ import com.pengjl.utils.ResponseResult;
 public interface CommentService extends IService<Comment> {
 
     ResponseResult commentList();
+
+    ResponseResult addComment(Comment comment);
 }
 

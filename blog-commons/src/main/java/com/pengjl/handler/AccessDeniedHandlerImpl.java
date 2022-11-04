@@ -1,4 +1,4 @@
-package com.pengjl.exception.handler;
+package com.pengjl.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.pengjl.utils.AppHttpCodeEnum;

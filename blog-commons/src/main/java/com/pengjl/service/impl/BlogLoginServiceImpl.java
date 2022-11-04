@@ -48,7 +48,7 @@ public class BlogLoginServiceImpl implements BlogLoginService {
     @Override
     public ResponseResult logout() {
         //解析token 获取userid
-        Long userId = SecurityUtil.getUserId();
+        Long userId = SecurityUtils.getUserId();
 
         //删除redis中的用户登录信息
         redisCache.deleteObject(SystemConstants.FRONT_LOGIN_REDIS_PREFIX+userId.toString());

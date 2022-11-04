@@ -1,4 +1,4 @@
-package com.pengjl.exception.handler;
+package com.pengjl.handler;
 
 import com.pengjl.exception.SystemException;
 import com.pengjl.utils.AppHttpCodeEnum;

@@ -16,6 +16,15 @@ public class SystemConstants
     public static final String STATUS_NORMAL = "0";
 
     /**
+     *评论类型为文章评论
+     */
+    public static final int COMMENT_ARTICLE = 0;
+
+    /**
+     * 评论类型为友情链接评论
+     */
+    public static final int COMMENT_LINK = 1;
+    /**
      *前台登录信息redis缓存前缀
      */
     public static final String FRONT_LOGIN_REDIS_PREFIX = "bloglogin:";
