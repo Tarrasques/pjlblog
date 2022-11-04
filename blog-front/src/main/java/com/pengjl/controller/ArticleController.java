@@ -1,4 +1,5 @@
 package com.pengjl.controller;
+import com.pengjl.annotation.SysLog;
 import com.pengjl.service.ArticleService;
 import com.pengjl.utils.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class ArticleController {
     }
 
     @GetMapping("/articleList")
+    @SysLog(bussinessName = "获取首页文章列表")
     public ResponseResult getArticleList() {
         return articleService.getArticleList();
     }
