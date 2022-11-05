@@ -28,4 +28,6 @@ public class SystemConstants
      *前台登录信息redis缓存前缀
      */
     public static final String FRONT_LOGIN_REDIS_PREFIX = "bloglogin:";
+
+    public static final String ARTICLE_VIEWCOUNT_REDIS_PREFIX = "article:viewCount";
 }

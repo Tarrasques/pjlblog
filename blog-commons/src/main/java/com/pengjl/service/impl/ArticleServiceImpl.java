@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +31,9 @@ import java.util.stream.Collectors;
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private RedisCache redisCache;
+
     @Override
     public ResponseResult getHotArticleList() {
         LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
@@ -39,6 +43,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         page(page,wrapper);
         List<Article> records = page.getRecords();
         List<HotArticleVo> hotArticleVos = BeanCopyUtils.copyBeanList(records, HotArticleVo.class);
+        Map<String, Integer> cacheMap = redisCache.getCacheMap(SystemConstants.ARTICLE_VIEWCOUNT_REDIS_PREFIX);
+
+        hotArticleVos.stream()
+                .map(hotArticleVo -> hotArticleVo.setViewCount(cacheMap.get(hotArticleVo.getId().toString()).longValue()))
+                .collect(Collectors.toList());
         return ResponseResult.okResult(hotArticleVos);
     }
 
@@ -61,18 +70,36 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 .map(article -> article.setCategoryName(categoryService.getById(article.getCategoryId()).getName()))
                 .collect(Collectors.toList());
         List<ArticleListVo> articleListVos = BeanCopyUtils.copyBeanList(articleList, ArticleListVo.class);
+
+        Map<String, Integer> cacheMap = redisCache.getCacheMap(SystemConstants.ARTICLE_VIEWCOUNT_REDIS_PREFIX);
+
+        articleListVos.stream()
+                .map(articleListVo -> articleListVo.setViewCount(cacheMap.get(articleListVo.getId().toString()).longValue()))
+                .collect(Collectors.toList());
+
         return ResponseResult.okResult(new PageVo(articleListVos,page.getTotal()));
     }
 
     @Override
     public ResponseResult getArticleDetails(Long id) {
         Article article = getById(id);
+        //从redis中取得浏览量
+        Integer viewCount = redisCache.getCacheMapValue(SystemConstants.ARTICLE_VIEWCOUNT_REDIS_PREFIX, id.toString());
+        article.setViewCount(viewCount.longValue());
+
         ArticleDetailsVo articleDetailsVo = BeanCopyUtils.copyBean(article, ArticleDetailsVo.class);
         Category category = categoryService.getById(articleDetailsVo.getCategoryId());
         if (category != null) {
             articleDetailsVo.setCategoryName(category.getName());
         }
         return ResponseResult.okResult(articleDetailsVo);
+    }
+
+    @Override
+    public ResponseResult updateViewCount(Long id) {
+        //更新redis中对应的文章浏览量
+        redisCache.incrementCacheMapValue(SystemConstants.ARTICLE_VIEWCOUNT_REDIS_PREFIX,id.toString(),1);
+        return ResponseResult.okResult();
     }
 }
 

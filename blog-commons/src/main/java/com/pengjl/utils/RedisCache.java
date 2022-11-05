@@ -202,6 +202,17 @@ public class RedisCache
     }
 
     /**
+     * Hash中的value递增
+     *
+     *   @param key Redis键
+     *   @param hKey Hash键
+     *   @param v  每次递增的值
+     *   @return
+     */
+    public void incrementCacheMapValue(String key,String hKey,int v) {
+            redisTemplate.opsForHash().increment(key,hKey,v);
+    }
+    /**
      * 删除Hash中的数据
      * 
      * @param key
