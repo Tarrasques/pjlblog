@@ -40,13 +40,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 // 对于登录接口 允许匿名访问
-                .antMatchers("/login").anonymous()
+                .antMatchers("/user/login").anonymous()
                 //退出登录必须携带token
-                .antMatchers("/logout").authenticated()
+                .antMatchers("/user/logout").authenticated()
                 //jwt过滤器测试用，如果测试没有问题吧这里删除了
                 // 除上面外的所有请求全部不需要认证即可访问
-                .anyRequest().permitAll();
-
+                .anyRequest().authenticated();
+        //关闭默认的注销功能
         http.logout().disable();
         //配置异常处理器
         http.exceptionHandling()

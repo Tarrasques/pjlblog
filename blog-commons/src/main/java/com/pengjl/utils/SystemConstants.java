@@ -28,6 +28,13 @@ public class SystemConstants
      *前台登录信息redis缓存前缀
      */
     public static final String FRONT_LOGIN_REDIS_PREFIX = "bloglogin:";
+    /**
+     * 后台登录信息redis缓存前缀
+     */
+    public static final String ADMIN_LOGIN_REDIS_PREFIX = "login:";
 
     public static final String ARTICLE_VIEWCOUNT_REDIS_PREFIX = "article:viewCount";
+
+    public static final String MENU = "M";
+    public static final String BUTTON = "F";
 }
