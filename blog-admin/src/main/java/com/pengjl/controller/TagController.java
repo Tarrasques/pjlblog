@@ -1,5 +1,7 @@
 package com.pengjl.controller;
 
+import com.alibaba.excel.util.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pengjl.entity.Tag;
 import com.pengjl.service.TagService;
@@ -23,7 +25,12 @@ public class TagController {
     @GetMapping("/list")
     public ResponseResult list(){
         Page<Tag> tagPage = new Page<>(MyRequestUtil.getRequest().getPageNum(), MyRequestUtil.getRequest().getPageSize());
-        tagService.page(tagPage);
+        String name = MyRequestUtil.getRequest().getValue("name");
+
+        tagService.page(tagPage,
+                new LambdaQueryWrapper<Tag>()
+                        .like(StringUtils.isNotBlank(name),Tag::getName,name));
+
         return ResponseResult.okResult(new PageVo(tagPage.getRecords(), tagPage.getTotal()));
     }
     @GetMapping("/{id}")
