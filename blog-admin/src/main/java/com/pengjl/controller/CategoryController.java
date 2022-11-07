@@ -6,13 +6,20 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pengjl.entity.Category;
 import com.pengjl.entity.Category;
 import com.pengjl.service.CategoryService;
+import com.pengjl.utils.BeanCopyUtils;
 import com.pengjl.utils.MyRequestUtil;
 import com.pengjl.utils.ResponseResult;
+import com.pengjl.utils.SystemConstants;
+import com.pengjl.vo.ListCategoryVo;
 import com.pengjl.vo.PageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/content/category")
@@ -51,5 +58,12 @@ public class CategoryController {
     @PostMapping()
     public ResponseResult add(@RequestBody Category Category) {
         return ResponseResult.okResult(categoryService.save(Category));
+    }
+    @GetMapping("/listAllCategory")
+    public ResponseResult listAll() {
+        List<Category> list = categoryService.list(new LambdaQueryWrapper<Category>().eq(Category::getStatus, SystemConstants.STATUS_NORMAL));
+
+        List<ListCategoryVo> listCategoryVos = BeanCopyUtils.copyBeanList(list, ListCategoryVo.class);
+        return ResponseResult.okResult(listCategoryVos);
     }
 }

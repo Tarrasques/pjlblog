@@ -3,15 +3,21 @@ package com.pengjl.controller;
 import com.alibaba.excel.util.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.pengjl.entity.Category;
 import com.pengjl.entity.Tag;
 import com.pengjl.service.TagService;
+import com.pengjl.utils.BeanCopyUtils;
 import com.pengjl.utils.MyRequestUtil;
 import com.pengjl.utils.ResponseResult;
+import com.pengjl.utils.SystemConstants;
+import com.pengjl.vo.ListCategoryVo;
+import com.pengjl.vo.ListTagVo;
 import com.pengjl.vo.PageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 @RestController
@@ -50,5 +56,12 @@ public class TagController {
     @PostMapping()
     public ResponseResult add(@RequestBody Tag tag) {
         return ResponseResult.okResult(tagService.save(tag));
+    }
+    @GetMapping("/listAllTag")
+    public ResponseResult listAll() {
+        List<Tag> list = tagService.list();
+
+        List<ListTagVo> listTagVos = BeanCopyUtils.copyBeanList(list, ListTagVo.class);
+        return ResponseResult.okResult(listTagVos);
     }
 }

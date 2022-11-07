@@ -1,24 +1,24 @@
 package com.pengjl.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.pengjl.entity.ArticleTag;
 import com.pengjl.entity.Category;
 import com.pengjl.mapper.ArticleMapper;
 import com.pengjl.entity.Article;
 import com.pengjl.service.ArticleService;
+import com.pengjl.service.ArticleTagService;
 import com.pengjl.service.CategoryService;
 import com.pengjl.utils.*;
-import com.pengjl.vo.ArticleDetailsVo;
-import com.pengjl.vo.ArticleListVo;
-import com.pengjl.vo.HotArticleVo;
-import com.pengjl.vo.PageVo;
+import com.pengjl.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +33,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private CategoryService categoryService;
     @Autowired
     private RedisCache redisCache;
-
+    @Autowired
+    private ArticleTagService articleTagService;
     @Override
     public ResponseResult getHotArticleList() {
         LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
@@ -101,5 +102,58 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         redisCache.incrementCacheMapValue(SystemConstants.ARTICLE_VIEWCOUNT_REDIS_PREFIX,id.toString(),1);
         return ResponseResult.okResult();
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseResult updateArticle(JSONObject jsonObject) {
+        Article article = JSONObject.toJavaObject(jsonObject, Article.class);
+        article.setId(Long.valueOf(jsonObject.getString("id")));
+        //文章表更新
+        updateById(article);
+        JSONArray tags = jsonObject.getJSONArray("tags");
+        //文章标签关联表更新
+        // TODO: 2022/11/7 这里先采取删除再保存的方式
+        articleTagService.remove(new LambdaQueryWrapper<ArticleTag>().eq(ArticleTag::getArticleId,article.getId()));
+        //如果tags为空或者为null，表示删除标签，有值才更新
+        if (Objects.nonNull(tags) && tags.size()>0) {
+            List<Long> tagIds = tags.stream().map(tag -> Long.valueOf((String) tag)).collect(Collectors.toList());
+            List<ArticleTag> list = tagIds.stream().map(tagId -> new ArticleTag(article.getId(), tagId)).collect(Collectors.toList());
+            articleTagService.saveBatch(list);
+        }
+
+        return ResponseResult.okResult();
+    }
+
+    /**
+     * 后台管理用
+     * @param id
+     * @return
+     */
+    @Override
+    public ResponseResult getarticleById(Long id) {
+        Article article = getById(id);
+        List<ListTagVo> listTagVos = baseMapper.selectTagListByArticleId(id);
+        List<Long> collect = listTagVos.stream().map(listTagVo -> listTagVo.getId()).collect(Collectors.toList());
+        Map<String,Object> map = new HashMap<>();
+        map.put("article",article);
+        map.put("tags",collect);
+        return ResponseResult.okResult(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseResult addArticle(JSONObject jsonObject) {
+        Article article = jsonObject.toJavaObject(Article.class);
+        JSONArray tags = jsonObject.getJSONArray("tags");
+        save(article);
+
+        if (Objects.nonNull(tags) && tags.size()>0) {
+            List<Long> tagIds = tags.stream().map(tag -> Long.valueOf((String) tag)).collect(Collectors.toList());
+            List<ArticleTag> list = tagIds.stream().map(tagId -> new ArticleTag(article.getId(), tagId)).collect(Collectors.toList());
+            articleTagService.saveBatch(list);
+        }
+        return ResponseResult.okResult();
+    }
+
 }
 

@@ -1,5 +1,6 @@
 package com.pengjl.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.pengjl.entity.Article;
 import com.pengjl.utils.ResponseResult;
@@ -20,5 +21,13 @@ public interface ArticleService extends IService<Article> {
 
 
     ResponseResult updateViewCount(Long id);
+
+    
+    
+    ResponseResult updateArticle(JSONObject jsonObject);
+
+    ResponseResult getarticleById(Long id);
+
+    ResponseResult addArticle(JSONObject jsonObject);
 }
 
