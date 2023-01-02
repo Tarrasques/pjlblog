@@ -22,8 +22,8 @@ public class ArticleListVo {
     private String categoryName;
     //缩略图
     private String thumbnail;
-
-
+    //是否置顶（0否，1是）
+    private String isTop;
     //访问量
     @Accessors(chain = true)
     private Long viewCount;

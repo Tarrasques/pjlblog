@@ -28,6 +28,7 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
+    @SysLog(bussinessName = "获取文章详情")
     public ResponseResult getArticleDetails(@PathVariable("id") Long id){
         return articleService.getArticleDetails(id);
     }
