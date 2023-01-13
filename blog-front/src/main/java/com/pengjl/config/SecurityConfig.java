@@ -44,6 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //退出登录必须携带token
                 .antMatchers("/logout").authenticated()
                 .antMatchers("/user/userInfo").authenticated()
+                .antMatchers("/upload").authenticated()
                 //jwt过滤器测试用，如果测试没有问题吧这里删除了
                 // 除上面外的所有请求全部不需要认证即可访问
                 .anyRequest().permitAll();

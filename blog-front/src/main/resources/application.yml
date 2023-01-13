@@ -1,3 +1,10 @@
 spring:
   profiles:
     active: dev
+
+#七牛云对象存储秘钥以及空间名
+oss:
+  accessKey: ujpDr1J3lYLAyhGRWStnC0lGCdRHutRz0fiNJedJ
+  secretKey: waIsjLumo_5x4FgAPlnr5uOjBvaAL-OCuTrr1QN3
+  bucket: pjl-blog
+  address: http://rodp2p6eo.hn-bkt.clouddn.com/
