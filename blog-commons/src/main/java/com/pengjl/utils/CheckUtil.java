@@ -11,9 +11,15 @@ public class CheckUtil {
      * @return
      */
     public static boolean isNumeric(String str) {
-        if((str.matches("[0-9]+"))&&(Long.parseLong(str)>0)) {
+        if (str==null){
+          return false;
+        }
+        else {
+            if((str.matches("[0-9]+"))&&(Long.parseLong(str)>0)) {
                 return true;
+            }
         }
         return false;
     }
+
 }
